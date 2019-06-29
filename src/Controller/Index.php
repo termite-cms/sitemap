@@ -18,6 +18,11 @@ final class Index
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @Method("GET")
      * @Routes("/sitemap.xml")
