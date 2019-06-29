@@ -3,6 +3,8 @@
 namespace Termite\Sitemap\Controller;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
 use ReactiveApps\Command\HttpServer\Annotations\Method;
 use ReactiveApps\Command\HttpServer\Annotations\Routes;
@@ -20,7 +22,7 @@ final class Index
      * @Method("GET")
      * @Routes("/sitemap.xml")
      */
-    public function index()
+    public function index(ServerRequestInterface $request): ResponseInterface
     {
         $event = new Type();
         $this->eventDispatcher->dispatch($event);
