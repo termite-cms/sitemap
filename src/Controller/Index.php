@@ -43,7 +43,7 @@ final class Index
         return new Response(
             200,
             [
-                'Content-Type:' => 'text/xml',
+                'Content-Type:' => 'application/xml; charset=UTF-8',
             ],
             $driver->output()
         );
