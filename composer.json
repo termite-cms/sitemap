@@ -10,9 +10,47 @@
     ],
     "require": {
         "php": "^7.2",
-        "thepixeldeveloper/sitemap": "^5.1"
+        "reactive-apps/command": "dev-master",
+        "reactive-apps/command-http-server": "dev-master",
+        "thepixeldeveloper/sitemap": "^5.1",
+        "wyrihaximus/broadcast": "dev-master",
+        "wyrihaximus/pool-info": "dev-master",
+        "wyrihaximus/react-inspector": "dev-master",
+        "wyrihaximus/react-inspector-child-process-pools": "dev-master",
+        "wyrihaximus/react-inspector-parallel-pools": "dev-master",
+        "wyrihaximus/react-parallel": "dev-master",
+        "wyrihaximus/to-thread-or-not-to-thread": "dev-master"
     },
     "require-dev": {
         "wyrihaximus/async-test-utilities": "^1.1"
+    },
+    "config": {
+        "platform": {
+            "php": "7.3"
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "php-di-definitions": {
+            "di": [
+                "etc/di/*.php"
+            ]
+        },
+        "reactive-apps": {
+            "http-controller": [
+                "src/Controller/*.php",
+                "src/Controller/**/*.php"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Termite\\Sitemap\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Termite\\Tests\\Sitemap\\": "tests/"
+        }
     }
 }
