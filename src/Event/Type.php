@@ -13,7 +13,7 @@ final class Type
 
     public function addType(SitemapType $type): void
     {
-        $this->types[] = $type;
+        $this->types[$type->getName()] = $type;
     }
 
     /**

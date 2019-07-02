@@ -2,7 +2,6 @@
 
 namespace Termite\Sitemap\Controller;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
 use ReactiveApps\Command\HttpServer\Annotations\Method;
@@ -11,8 +10,12 @@ use Termite\Sitemap\TypesRegistry;
 use Thepixeldeveloper\Sitemap\Drivers\XmlWriterDriver;
 use Thepixeldeveloper\Sitemap\Sitemap;
 use Thepixeldeveloper\Sitemap\SitemapIndex;
+use WyriHaximus\Annotations\Coroutine;
 
-final class Index
+/**
+ * @Coroutine()
+ */
+final class Type
 {
     /** @var TypesRegistry */
     private $typeRegistry;
@@ -24,13 +27,17 @@ final class Index
 
     /**
      * @Method("GET")
-     * @Routes("/sitemap.xml")
+     * @Routes("/sitemap/{type:[a-zA-Z0-9\-]{1,}}.xml")
      */
-    public function index(ServerRequestInterface $request): ResponseInterface
+    public function type(ServerRequestInterface $request)
     {
+        $type = $this->typeRegistry->getType($request->getAttribute('type'));
+
+        $count = yield $type->getHandler()->count();
+
         $urlSet = new SitemapIndex();
-        foreach ($this->typeRegistry->getTypes() as $type) {
-            $urlSet->add(new Sitemap('/sitemap/' . $type->getName() . '.xml'));
+        for ($i = 0; $i < ceil($count / 1000); $i++) {
+            $urlSet->add(new Sitemap('/sitemap/' . $type->getName() . '/' . $i . '.xml'));
         }
 
         $driver = new XmlWriterDriver();

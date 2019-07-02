@@ -2,7 +2,6 @@
 
 namespace Termite\Sitemap\Controller;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
 use ReactiveApps\Command\HttpServer\Annotations\Method;
@@ -11,8 +10,14 @@ use Termite\Sitemap\TypesRegistry;
 use Thepixeldeveloper\Sitemap\Drivers\XmlWriterDriver;
 use Thepixeldeveloper\Sitemap\Sitemap;
 use Thepixeldeveloper\Sitemap\SitemapIndex;
+use Thepixeldeveloper\Sitemap\Url;
+use Thepixeldeveloper\Sitemap\Urlset;
+use WyriHaximus\Annotations\Coroutine;
 
-final class Index
+/**
+ * @Coroutine()
+ */
+final class Page
 {
     /** @var TypesRegistry */
     private $typeRegistry;
@@ -24,13 +29,20 @@ final class Index
 
     /**
      * @Method("GET")
-     * @Routes("/sitemap.xml")
+     * @Routes("/sitemap/{type:[a-zA-Z0-9\-]{1,}}/{page:[0-9]{1,}}.xml")
      */
-    public function index(ServerRequestInterface $request): ResponseInterface
+    public function page(ServerRequestInterface $request)
     {
-        $urlSet = new SitemapIndex();
-        foreach ($this->typeRegistry->getTypes() as $type) {
-            $urlSet->add(new Sitemap('/sitemap/' . $type->getName() . '.xml'));
+        $type = $this->typeRegistry->getType($request->getAttribute('type'));
+
+        /** @var Url[] $urls */
+        $urls = yield $type->getHandler()->page((int) $request->getAttribute('page'))->filter(function ($v) {
+            return $v instanceof Url;
+        })->toArray()->toPromise();
+
+        $urlSet = new Urlset();
+        foreach ($urls as $url) {
+            $urlSet->add($url);
         }
 
         $driver = new XmlWriterDriver();
