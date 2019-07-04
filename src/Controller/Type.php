@@ -2,6 +2,7 @@
 
 namespace Termite\Sitemap\Controller;
 
+use DI\Annotation\Inject;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
 use ReactiveApps\Command\HttpServer\Annotations\Method;
@@ -10,6 +11,7 @@ use Termite\Sitemap\TypesRegistry;
 use Thepixeldeveloper\Sitemap\Drivers\XmlWriterDriver;
 use Thepixeldeveloper\Sitemap\Sitemap;
 use Thepixeldeveloper\Sitemap\SitemapIndex;
+use WoWScreenshotsNet\Model\ScreenshotsTableInterface;
 use WyriHaximus\Annotations\Coroutine;
 
 /**
@@ -20,9 +22,16 @@ final class Type
     /** @var TypesRegistry */
     private $typeRegistry;
 
-    public function __construct(TypesRegistry $typeRegistry)
+    /** @var string */
+    private $fullBaseUrl;
+
+    /**
+     * @Inject({"fullBaseUrl" = "config.app.full_base_url"})
+     */
+    public function __construct(TypesRegistry $typeRegistry, string $fullBaseUrl)
     {
         $this->typeRegistry = $typeRegistry;
+        $this->fullBaseUrl = $fullBaseUrl;
     }
 
     /**
@@ -37,7 +46,7 @@ final class Type
 
         $urlSet = new SitemapIndex();
         for ($i = 0; $i < ceil($count / 1000); $i++) {
-            $urlSet->add(new Sitemap('/sitemap/' . $type->getName() . '/' . $i . '.xml'));
+            $urlSet->add(new Sitemap($this->fullBaseUrl . '/sitemap/' . $type->getName() . '/' . $i . '.xml'));
         }
 
         $driver = new XmlWriterDriver();

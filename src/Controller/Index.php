@@ -2,6 +2,7 @@
 
 namespace Termite\Sitemap\Controller;
 
+use DI\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
@@ -17,9 +18,16 @@ final class Index
     /** @var TypesRegistry */
     private $typeRegistry;
 
-    public function __construct(TypesRegistry $typeRegistry)
+    /** @var string */
+    private $fullBaseUrl;
+
+    /**
+     * @Inject({"fullBaseUrl" = "config.app.full_base_url"})
+     */
+    public function __construct(TypesRegistry $typeRegistry, string $fullBaseUrl)
     {
         $this->typeRegistry = $typeRegistry;
+        $this->fullBaseUrl = $fullBaseUrl;
     }
 
     /**
@@ -30,7 +38,7 @@ final class Index
     {
         $urlSet = new SitemapIndex();
         foreach ($this->typeRegistry->getTypes() as $type) {
-            $urlSet->add(new Sitemap('/sitemap/' . $type->getName() . '.xml'));
+            $urlSet->add(new Sitemap($this->fullBaseUrl . '/sitemap/' . $type->getName() . '.xml'));
         }
 
         $driver = new XmlWriterDriver();
