@@ -11,7 +11,7 @@
     "require": {
         "php": "^7.2",
         "reactive-apps/command": "dev-master",
-        "reactive-apps/command-http-server": "dev-thruway",
+        "reactive-apps/command-http-server": "dev-master",
         "thepixeldeveloper/sitemap": "^5.1",
         "wyrihaximus/broadcast": "dev-master",
         "wyrihaximus/pool-info": "dev-master",
